@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+        <meta charset="UTF-8">
+        <title>微信 JS-SDK 初始化验证</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 微信 JS-SDK -->
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+</head>
+<body>
+
+<h2>微信 JS-SDK 初始化测试</h2>
+<button id="btn">测试 scanQRCode</button>
+
+<script>
+    // 1. 当前页面 URL（去掉 #）
+    const url = location.href.split('#')[0]
+
+    // 2. 请求后台生成配置
+    fetch('http://123.60.83.68:8788/mine/wechat/wx/js-sdk-config?url=' + encodeURIComponent(url))
+        .then(res => res.json())
+        .then(cfg => {
+            console.log('js-sdk config from backend:', cfg)
+
+            // 3. 初始化 wx.config
+            wx.config({
+                debug: true, // 调试阶段建议 true
+                appId: cfg.appId,
+                timestamp: cfg.timestamp,
+                nonceStr: cfg.nonceStr,
+                signature: cfg.signature,
+                jsApiList: [
+                    'scanQRCode'
+                ]
+            })
+        })
+        .catch(err => {
+            alert('获取 js-sdk-config 失败')
+            console.error(err)
+        })
+
+    // 4. 初始化成功
+    wx.ready(function () {
+        alert('wx.config 初始化成功 🎉')
+
+        document.getElementById('btn').onclick = function () {
+            wx.scanQRCode({
+                needResult: 1,
+                scanType: ['qrCode', 'barCode'],
+                success: function (res) {
+                    alert('扫码结果：' + res.resultStr)
+                }
+            })
+        }
+    })
+
+    // 5. 初始化失败
+    wx.error(function (err) {
+        alert('wx.config 初始化失败 ❌')
+        console.error('wx.error:', err)
+    })
+</script>
+
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>
