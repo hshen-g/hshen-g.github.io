@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>微信支付拉起页面</title>
+</head>
+<body>
+
+<h2>点击按钮拉起微信支付</h2>
+<button onclick="pay()">立即支付</button>
+
+<script>
+    const payParams = {
+        appId: "wx0f2ba28a9eb78771",
+        timeStamp: "1766657448",
+        nonceStr: "240vpBodC7jUNA5EkSgHR5IHwpDTncf6",
+        package: "prepay_id=wx251810479558846471469449f44e380001",
+        signType: "MD5",
+        paySign: "C2235F9AA56150A59B4CF4A2945B9143"
+    };
+
+    function onBridgeReady() {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            payParams,
+            function (res) {
+                if (res.err_msg === "get_brand_wcpay_request:ok") {
+                    alert("支付成功");
+                } else if (res.err_msg === "get_brand_wcpay_request:cancel") {
+                    alert("支付取消");
+                } else {
+                    alert("支付失败：" + res.err_msg);
+                }
+            }
+        );
+    }
+
+    function pay() {
+        if (typeof WeixinJSBridge === "undefined") {
+            alert("请在微信内打开页面");
+            return;
+        }
+        onBridgeReady();
+    }
+</script>
+
+</body>
+</html>
